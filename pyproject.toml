@@ -1,0 +1,50 @@
+
+[project]
+name = "mona-backend"
+version = "1.0.0"
+description = "Mona's Backend Service"
+requires-python = "~=3.12.0"
+dependencies = [
+    "hayhooks==0.10.1",
+    "psutil==7.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black==24.10.0",
+    "isort==5.13.2",
+    "mypy==1.13.0",
+    "bandit==1.8.6",
+]
+test = [
+    "pytest==8.4.2",
+    "pytest-asyncio==1.1.0",
+    "pytest-cov==6.2.1"
+]
+
+[build-system]
+requires = ["setuptools==78.1.1", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.12.9"
+strict = true
+ignore_missing_imports = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+warn_unreachable = true
+disable_error_code = ["misc"]
