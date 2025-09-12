@@ -13,7 +13,7 @@ import psutil
 from fastapi import APIRouter, HTTPException
 from hayhooks.settings import settings
 
-from ..schemas.system import HealthResponse, InfoResponse, LiveResponse, ReadyResponse
+from src.schemas.system import HealthResponse, InfoResponse, LiveResponse, ReadyResponse
 
 router = APIRouter(tags=["System"])
 

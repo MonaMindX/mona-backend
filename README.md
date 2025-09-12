@@ -2,7 +2,6 @@
 
 ![Mona Backend Banter](static/images/repo-banter.png)
 
-
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3129/)
 [![Hayhooks 0.10.1](https://img.shields.io/badge/hayhooks-0.10.1-ff69b4)](https://github.com/MonaMindX/hayhooks)
 [![FastAPI 0.116.1](https://img.shields.io/badge/FastAPI-0.116.1-009688.svg)](https://fastapi.tiangolo.com/)
@@ -17,25 +16,42 @@
 ![Status: Active](https://img.shields.io/badge/status-active-success.svg)
 [![Made with ❤️](https://img.shields.io/badge/made%20with-❤️-red.svg)](https://github.com/MonaMindX)
 
-
 ## 📑 Table of Contents
 
 - [Overview](#overview)
+- [Available Pipelines](#available-pipelines)
 - [Getting Started](#getting-started)
-  - [Installation](#installation)
 - [API Endpoints](#api-endpoints)
-- [API Documentation](#api-documentation)
 - [Testing](#testing)
 - [Code Quality](#code-quality)
 - [License](#license)
 - [Contributing](#contributing)
-  - [Reporting Issues](#reporting-issues)
+- [Reporting Issues](#reporting-issues)
 
 ## Overview
 
 Mona-backend provides the core API services for the Mona platform.
 
-Mona-backend is the core backend service of the MonaMind project.
+## Available Pipelines
+
+### Indexing Pipeline (`indexing_mona`)
+
+The Indexing Pipeline (`indexing_mona`) is an automated document processing pipeline designed to convert, split, clean, embed, and store documents in a vector database for intelligent search and retrieval.
+
+**Supported Formats**: `.md`, `.txt`, `.pdf`, `.docx`, `.pptx`, `.xlsx`, `.xls`
+
+#### Pipeline Flow
+
+The Indexing Pipeline follows a step-by-step process to process and store documents in the vector database. Here's a high-level overview of the pipeline flow:
+
+1. **Document Upload**: Users upload documents to the Mona platform.
+2. **Document Conversion**: The pipeline converts the uploaded documents to Markdown format.
+3. **Document Processing & Chunking**: The pipeline processes and splits the Markdown documents into smaller chunks.
+4. **Document Embedding**: The pipeline generates embeddings for each chunk of the document using a pre-trained embedding model.
+5. **Document Storage**: The pipeline stores the document embeddings and associated metadata in a vector database for efficient search and retrieval.
+6. **Document Cleanup**: The pipeline removes any temporary files or intermediate artifacts created during the processing and storage of the documents.
+
+<!-- Future pipelines will be added here -->
 
 ## Getting Started
 
@@ -48,7 +64,14 @@ Mona-backend is the core backend service of the MonaMind project.
    cd mona-backend
    ```
 
-2. Install dependencies:
+2. Create and activate a virtual environment (recommended):
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies:
 
    ```bash
    pip install -e .
@@ -60,7 +83,7 @@ Mona-backend is the core backend service of the MonaMind project.
    pip install -e ".[dev,test]"
    ```
 
-3. Run the development server:
+4. Run the development server:
 
    ```bash
    python -m src.main
@@ -74,16 +97,55 @@ The application is configured using environment variables. Create a `.env` file 
 cp .env.example .env
 ```
 
-Then, update the .env file with your specific settings. The following variables are available:
-
-| Variable        | Description                                                               | Default       |
-| --------------- | ------------------------------------------------------------------------- | ------------- |
-| `ENVIRONMENT`   | The runtime environment. Can be `development`, `production`, or `test`.   | `development` |
-| `HAYHOOKS_HOST` | The host for the Hayhooks server.                                         | `localhost`   |
-| `HAYHOOKS_PORT` | The port for the Hayhooks server.                                         | `1416`        |
-| `LOG`           | Logging level. Can be `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`. | `INFO`        |
+Then, update the .env file with your specific settings.
 
 ## API Endpoints
+
+### API Documentation
+
+When the server is running, you can access the interactive API documentation:
+
+- Swagger UI: `http://localhost:1416/docs`
+- ReDoc: `http://localhost:1416/redoc`
+
+### Pipelines routes
+
+| Method | Endpoint             | Description               | Content Type          |
+| ------ | -------------------- | ------------------------- | --------------------- |
+| POST   | `/indexing_mona/run` | Run the Indexing Pipeline | `multipart/form-data` |
+
+#### Indexing Pipeline Parameters
+
+**Required Parameters:**
+
+- `files` (array): List of file upload objects containing document data
+- `titles` (array of strings): List of titles for each document (must match number of files)
+
+**Optional Parameters:**
+
+- `summaries` (array of strings): List of summaries for each document
+- `document_types` (array of strings): List of document types for each document
+
+**Example Usage:**
+
+```bash
+curl -X POST "http://localhost:1416/indexing_mona/run" \
+  -H "Content-Type: multipart/form-data" \
+  -F "files=@document1.pdf" \
+  -F "files=@document2.docx" \
+  -F "titles=Technical Documentation" \
+  -F "titles=User Manual" \
+  -F "summaries=API reference guide" \
+  -F "summaries=End-user instructions" \
+  -F "document_types=technical" \
+  -F "document_types=manual"
+```
+
+**Response:**
+
+```json
+"Successfully added 2 documents to the knowledgebase."
+```
 
 ### System Routes
 
@@ -93,13 +155,6 @@ Then, update the .env file with your specific settings. The following variables 
 | GET    | `/api/v1/ready`  | Kubernetes readiness probe                     |
 | GET    | `/api/v1/live`   | Kubernetes liveness probe                      |
 | GET    | `/api/v1/info`   | System information and environment details     |
-
-## API Documentation
-
-When the server is running, you can access the interactive API documentation:
-
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
 
 ## Testing
 
@@ -154,7 +209,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 4. Create a clear, concise PR with a description of the changes and their purpose.
 
-### Reporting Issues
+## Reporting Issues
 
 If you find a bug or have a feature request, please open an issue on the GitHub repository. Include:
 
