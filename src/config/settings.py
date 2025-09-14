@@ -72,19 +72,19 @@ class Settings(BaseSettings):
         description="OpenAI API key for accessing the local api.",
     )
 
-    # Document Embedder Configuration
-    document_embedder_embedding_model: str = Field(
+    # Document & Text Embedders Configuration
+    embedder_embedding_model: str = Field(
         default="text-embedding-qwen3-embedding-0.6b",
         description="The embedding model to use for document embedding.",
     )
-    document_embedder_dimensions: int = Field(
+    embedder_dimensions: int = Field(
         default=1024, gt=0, description="The dimensionality of the document embeddings."
     )
-    document_embedder_timeout: float = Field(
+    embedder_timeout: float = Field(
         default=600.0, gt=0, description="The timeout for document embedding."
     )
 
-    # Document Store Configuration
+    # Document Store & Retriever Configuration
     document_store_embedding_dimensions: int = Field(
         default=1024,
         gt=0,
@@ -119,7 +119,7 @@ settings = Settings()
 
 # Global document store to be accessed throughout the application
 document_store = initialize_document_store(
-    embedding_dimension=settings.document_embedder_dimensions,
+    embedding_dimension=settings.embedder_dimensions,
     vector_function=settings.document_store_vector_function,
     recreate_table=settings.document_store_recreate_table,
     search_strategy=settings.document_store_search_strategy,
