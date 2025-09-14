@@ -40,7 +40,7 @@ The Indexing Pipeline (`indexing_mona`) is an automated document processing pipe
 
 **Supported Formats**: `.md`, `.txt`, `.pdf`, `.docx`, `.pptx`, `.xlsx`, `.xls`
 
-#### Pipeline Flow
+#### Indexing Pipeline Flow
 
 The Indexing Pipeline follows a step-by-step process to process and store documents in the vector database. Here's a high-level overview of the pipeline flow:
 
@@ -50,6 +50,22 @@ The Indexing Pipeline follows a step-by-step process to process and store docume
 4. **Document Embedding**: The pipeline generates embeddings for each chunk of the document using a pre-trained embedding model.
 5. **Document Storage**: The pipeline stores the document embeddings and associated metadata in a vector database for efficient search and retrieval.
 6. **Document Cleanup**: The pipeline removes any temporary files or intermediate artifacts created during the processing and storage of the documents.
+
+### Retrieval Pipeline (`retrieval_mona`)
+
+The Retrieval Pipeline (`retrieval_mona`) is an intelligent document search and retrieval system that finds the most relevant documents from the vector database based on user queries using semantic similarity.
+
+**Input**: Natural language queries (text strings)
+
+#### Retrieval Pipeline Flow
+
+The Retrieval Pipeline follows a streamlined process to find and return relevant documents. Here's a high-level overview of the pipeline flow:
+
+1. **Query Processing**: Users submit natural language queries to search for relevant documents.
+2. **Query Embedding**: The pipeline generates embeddings for the input query using the same embedding model used during indexing.
+3. **Similarity Search**: The pipeline performs semantic similarity search against the vector database to find the most relevant document chunks.
+4. **Document Retrieval**: The pipeline retrieves the top matching documents with their associated metadata and relevance scores.
+5. **Response Formatting**: The pipeline formats and returns the retrieved documents as a structured response.
 
 <!-- Future pipelines will be added here -->
 
@@ -110,9 +126,10 @@ When the server is running, you can access the interactive API documentation:
 
 ### Pipelines routes
 
-| Method | Endpoint             | Description               | Content Type          |
-| ------ | -------------------- | ------------------------- | --------------------- |
-| POST   | `/indexing_mona/run` | Run the Indexing Pipeline | `multipart/form-data` |
+| Method | Endpoint              | Description                | Content Type          |
+| ------ | --------------------- | -------------------------- | --------------------- |
+| POST   | `/indexing_mona/run`  | Run the Indexing Pipeline  | `multipart/form-data` |
+| POST   | `/retrieval_mona/run` | Run the Retrieval Pipeline | `application/json`    |
 
 #### Indexing Pipeline Parameters
 
@@ -145,6 +162,49 @@ curl -X POST "http://localhost:1416/indexing_mona/run" \
 
 ```json
 "Successfully added 2 documents to the knowledgebase."
+```
+
+#### Retrieval Pipeline Parameters
+
+**Required Parameters:**
+
+- `query` (string): Natural language query string for document retrieval
+
+**Example Usage:**
+
+```bash
+curl -X POST "http://localhost:1416/retrieval_mona/run" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "How do I set up the API?"}'
+```
+
+**Response:**
+
+```json
+[
+  {
+    "id": "doc_123",
+    "content": "To configure API settings, navigate to the configuration file...",
+    "meta": {
+      "file_name": "api_guide.pdf",
+      "title": "API Configuration Guide",
+      "document_type": "technical",
+      "summary": "Complete guide for API setup"
+    },
+    "score": 0.95
+  },
+  {
+    "id": "doc_456",
+    "content": "API configuration involves setting environment variables...",
+    "meta": {
+      "file_name": "setup_manual.docx",
+      "title": "Setup Manual",
+      "document_type": "manual",
+      "summary": "Installation and setup instructions"
+    },
+    "score": 0.87
+  }
+]
 ```
 
 ### System Routes
