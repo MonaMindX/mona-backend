@@ -67,7 +67,38 @@ The Retrieval Pipeline follows a streamlined process to find and return relevant
 4. **Document Retrieval**: The pipeline retrieves the top matching documents with their associated metadata and relevance scores.
 5. **Response Formatting**: The pipeline formats and returns the retrieved documents as a structured response.
 
-<!-- Future pipelines will be added here -->
+### Query Processing Pipeline (`mona`)
+
+The Query Processing Pipeline (`mona`) is the main conversational AI pipeline that intelligently processes user queries and generates contextually appropriate responses. It combines direct question answering with retrieval-augmented generation (RAG) to provide accurate and relevant answers.
+
+**Input**: Natural language queries (text strings)
+**Output**: Generated text responses
+
+#### Query Processing Pipeline Flow
+
+The Query Processing Pipeline uses intelligent routing to determine the best approach for answering each query. Here's a high-level overview of the pipeline flow:
+
+1. **Query Classification**: The pipeline analyzes the incoming query to determine whether it requires document retrieval or can be answered directly.
+
+2. **Intelligent Routing**: Based on the classification results, the pipeline routes the query through one of two paths:
+   - **Direct Path**: For general questions that don't require specific document context
+   - **RAG Path**: For queries that need information from the knowledge base
+
+3. **Direct Query Processing**:
+   - Builds a direct prompt for general knowledge questions
+   - Sends the prompt directly to the LLM generator
+
+4. **RAG Query Processing**:
+   - Generates embeddings for the query using the same model used during indexing
+   - Retrieves relevant documents from the vector database
+   - Builds a context-aware prompt with retrieved documents
+   - Combines query and retrieved context for enhanced responses
+
+5. **Prompt Joining**: The pipeline merges outputs from both prompt builders using a branch joiner to ensure only the appropriate prompt reaches the LLM.
+
+6. **Response Generation**: A single LLM generator processes the final prompt and generates the response, ensuring consistent output quality regardless of the routing path.
+
+7. **Response Delivery**: The pipeline returns the generated response to the user, with support for both synchronous and streaming modes.
 
 ## Getting Started
 
@@ -126,10 +157,11 @@ When the server is running, you can access the interactive API documentation:
 
 ### Pipelines routes
 
-| Method | Endpoint              | Description                | Content Type          |
-| ------ | --------------------- | -------------------------- | --------------------- |
-| POST   | `/indexing_mona/run`  | Run the Indexing Pipeline  | `multipart/form-data` |
-| POST   | `/retrieval_mona/run` | Run the Retrieval Pipeline | `application/json`    |
+| Method | Endpoint              | Description                       | Content Type          |
+| ------ | --------------------- | --------------------------------- | --------------------- |
+| POST   | `/indexing_mona/run`  | Run the Indexing Pipeline         | `multipart/form-data` |
+| POST   | `/retrieval_mona/run` | Run the Retrieval Pipeline        | `application/json`    |
+| POST   | `/mona/run`           | Run the Query Processing Pipeline | `application/json`    |
 
 #### Indexing Pipeline Parameters
 
@@ -205,6 +237,26 @@ curl -X POST "http://localhost:1416/retrieval_mona/run" \
     "score": 0.87
   }
 ]
+```
+
+#### Query Processing Pipeline Parameters
+
+**Required Parameters:**
+
+- `query` (string): Natural language query string for document retrieval
+
+**Example Usage:**
+
+```bash
+curl -X POST "http://localhost:1416/mona/run" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "How do I set up the API?"}'
+```
+
+**Response:**
+
+```json
+"Here's how you can set up the API: [generated response content]"
 ```
 
 ### System Routes

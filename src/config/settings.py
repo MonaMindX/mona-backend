@@ -84,6 +84,26 @@ class Settings(BaseSettings):
         default=600.0, gt=0, description="The timeout for document embedding."
     )
 
+    # LLM Configuration
+    llm_model: str = Field(
+        default="liquid/lfm2-1.2b",
+        description="LLM Model Name.",
+    )
+    llm_max_tokens: int = Field(
+        default=1024,
+        gt=0,
+        description="The maximum number of tokens to generate from the LLM.",
+    )
+    llm_temperature: float = Field(
+        default=0.7,
+        ge=0,
+        le=1.0,
+        description="The temperature parameter for the LLM model.",
+    )
+    llm_timeout: float = Field(
+        default=600.0, gt=0, description="The timeout for LLM model execution."
+    )
+
     # Document Store & Retriever Configuration
     document_store_embedding_dimensions: int = Field(
         default=1024,
