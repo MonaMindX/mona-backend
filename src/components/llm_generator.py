@@ -12,7 +12,7 @@ def initialize_llm_generator(
     model: str = settings.llm_model,
     max_tokens: int = settings.llm_max_tokens,
     temperature: float = settings.llm_temperature,
-    timeout:float = settings.llm_timeout
+    timeout: float = settings.llm_timeout,
 ) -> OpenAIGenerator:
     """
     Initialize the OpenAI Generator and return it.

@@ -129,7 +129,7 @@ class PipelineWrapper(BasePipelineWrapper):
         """
         try:
             # Extract the last user message
-            query = get_last_user_message(messages) # pyright: ignore[reportCallIssue]
+            query = get_last_user_message(messages)  # pyright: ignore[reportCallIssue]
 
             return streaming_generator(  # type: ignore[no-any-return]
                 pipeline=self.pipeline,

@@ -5,6 +5,7 @@ from haystack import component
 
 from src.pipelines.mona.pipeline import initialize_chat_pipeline
 
+
 def create_mock_component(name: str) -> MagicMock:
     """Creates a MagicMock that looks like a Haystack Component."""
     mock = MagicMock(spec=component)
@@ -17,9 +18,7 @@ def test_initialize_chat_pipeline_creates_async_pipeline() -> None:
     Test that initialize_chat_pipeline creates an AsyncPipeline when is_async is True.
     """
     with (
-        patch(
-            "src.pipelines.mona.pipeline.AsyncPipeline"
-        ) as mock_async_pipeline,
+        patch("src.pipelines.mona.pipeline.AsyncPipeline") as mock_async_pipeline,
         patch("src.pipelines.mona.pipeline.Pipeline") as mock_sync_pipeline,
     ):
         # Call the function with is_async=True
@@ -43,9 +42,7 @@ def test_initialize_chat_pipeline_creates_sync_pipeline() -> None:
     when is_async is False.
     """
     with (
-        patch(
-            "src.pipelines.mona.pipeline.AsyncPipeline"
-        ) as mock_async_pipeline,
+        patch("src.pipelines.mona.pipeline.AsyncPipeline") as mock_async_pipeline,
         patch("src.pipelines.mona.pipeline.Pipeline") as mock_sync_pipeline,
     ):
         # Call the function with is_async=False
@@ -61,6 +58,7 @@ def test_initialize_chat_pipeline_creates_sync_pipeline() -> None:
         # Assert all components were added and connected
         assert mock_sync_pipeline.return_value.add_component.call_count == 8
         assert mock_sync_pipeline.return_value.connect.call_count == 9
+
 
 @pytest.mark.parametrize("is_async", [True, False])
 def test_initialize_chat_pipeline_raises_exception_on_component_failure(
