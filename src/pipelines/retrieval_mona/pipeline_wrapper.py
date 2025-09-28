@@ -1,7 +1,7 @@
 """
-Pipeline Wrapper for the indexing pipeline
+Pipeline Wrapper for the retrieval pipeline
 
-This class wraps the indexing pipeline and provides API functionality.
+This class wraps the retrieval pipeline and provides API functionality.
 """
 
 from typing import List, cast
