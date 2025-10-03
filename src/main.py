@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from hayhooks import create_app, log
 
 from src.config.settings import settings
+from src.routes.documents import router as documents_router
 from src.routes.system import router as system_router
 
 
@@ -15,7 +16,9 @@ def create_application() -> FastAPI:
     app = create_app()
 
     app.include_router(system_router, prefix="/api/v1")
-    log.debug("Successfully added System Routes")
+    app.include_router(documents_router, prefix="/api/v1")
+
+    log.debug("Successfully added all Routes")
     return app
 
 

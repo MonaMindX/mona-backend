@@ -268,6 +268,136 @@ curl -X POST "http://localhost:1416/mona/run" \
 | GET    | `/api/v1/live`   | Kubernetes liveness probe                      |
 | GET    | `/api/v1/info`   | System information and environment details     |
 
+### Documents Routes
+
+The Documents API provides endpoints for managing document metadata and lifecycle. Documents are initially added through the [Indexing Pipeline](#indexing-pipeline-parameters) (`/indexing_mona/run`), and these endpoints allow you to view, update, and delete them.
+
+| Method | Endpoint                        | Description                                 |
+| ------ | ------------------------------- | ------------------------------------------- |
+| GET    | `/api/v1/documents/`            | Retrieve metadata for all documents         |
+| PUT    | `/api/v1/documents/{source_id}` | Update document metadata by source ID       |
+| DELETE | `/api/v1/documents/{source_id}` | Delete document and all chunks by source ID |
+| GET    | `/api/v1/documents/health`      | Documents service health check              |
+
+> **Note:** To add new documents to the knowledge base, use the [Indexing Pipeline](#indexing-pipeline-parameters) endpoint (`POST /indexing_mona/run`).
+
+#### Get All Documents
+
+Retrieve metadata for all documents in the knowledge base.
+
+**Example Usage:**
+
+```bash
+curl -X GET "http://localhost:1416/api/v1/documents/"
+```
+
+**Response:**
+
+```json
+{
+  "status_code": 200,
+  "message": "Successfully retrieved 2 documents",
+  "documents": [
+    {
+      "source_id": "doc_123",
+      "title": "API Configuration Guide",
+      "summary": "Complete guide for API setup",
+      "document_type": "technical",
+      "file_name": "api_guide.pdf",
+      "file_size": 2048576,
+      "created_at": "2024-01-15T10:30:00Z"
+    },
+    {
+      "source_id": "doc_456",
+      "title": "Setup Manual",
+      "summary": "Installation and setup instructions",
+      "document_type": "manual",
+      "file_name": "setup_manual.docx",
+      "file_size": 1024000,
+      "created_at": "2024-01-15T11:45:00Z"
+    }
+  ]
+}
+```
+
+#### Update Document Metadata
+
+Update metadata for a specific document. Only non-null fields in the request body will be updated.
+
+**Required Parameters:**
+
+- `source_id` (string): The unique identifier of the document
+
+**Optional Parameters:**
+
+- `title` (string): Document title
+- `summary` (string): Document summary
+- `document_type` (string): Type/category of the document
+- `file_name` (string): Original file name
+- `file_size` (integer): File size in bytes
+
+**Example Usage:**
+
+```bash
+curl -X PUT "http://localhost:1416/api/v1/documents/doc_123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Updated API Configuration Guide",
+    "summary": "Comprehensive API setup and configuration guide"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "status_code": 200,
+  "message": "Document metadata updated successfully"
+}
+```
+
+#### Delete Document
+
+Delete a document and all its associated chunks from the knowledge base.
+
+**Required Parameters:**
+
+- `source_id` (string): The unique identifier of the document
+
+**Example Usage:**
+
+```bash
+curl -X DELETE "http://localhost:1416/api/v1/documents/doc_123"
+```
+
+**Response:**
+
+```json
+{
+  "status_code": 200,
+  "message": "Successfully deleted document."
+}
+```
+
+#### Documents Service Health Check
+
+Check the health status of the documents service.
+
+**Example Usage:**
+
+```bash
+curl -X GET "http://localhost:1416/api/v1/documents/health"
+```
+
+**Response:**
+
+```json
+{
+  "status_code": 200,
+  "message": "Documents service is healthy"
+}
+```
+
 ## Testing
 
 Run the test suite:
