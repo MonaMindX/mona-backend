@@ -173,16 +173,21 @@ def test_extract_file_metadata_no_filename() -> None:
     temp_file.write_text("content")
     temp_files = [str(temp_file)]
 
-    # Call the method directly
-    file_names, file_sizes = (
-        wrapper._extract_file_metadata(  # pyright: ignore[reportPrivateUsage]
-            files_without_filename, temp_files
+    try:
+        # Call the method directly
+        file_names, file_sizes = (
+            wrapper._extract_file_metadata(  # pyright: ignore[reportPrivateUsage]
+                files_without_filename, temp_files
+            )
         )
-    )
 
-    # Assert that the default filename is created
-    assert file_names == ["uploaded_file_0"]
-    assert file_sizes == [len("content")]
+        # Assert that the default filename is created
+        assert file_names == ["uploaded_file_0"]
+        assert file_sizes == [len("content")]
+    finally:
+        # Clean up the temporary file
+        if temp_file.exists():
+            temp_file.unlink()
 
 
 def test_parse_metadata_defaults() -> None:
